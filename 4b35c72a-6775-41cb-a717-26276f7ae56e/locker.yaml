@@ -1,0 +1,109 @@
+id: 4b35c72a-6775-41cb-a717-26276f7ae56e
+title: Open WebUI Starter template
+description: The Open WebUI Starter default template with a preset configuration.
+url: "https://github.com/iamobservable/open-webui-starter"
+files:
+  - compose.yaml.template
+  - env/auth.env.template
+  - env/docling.env.template
+  - env/edgetts.env.template
+  - env/mcp.env.template
+  - env/nginx.env.template
+  - env/ollama.env.template
+  - env/openwebui.env.template
+  - env/postgres.env.template
+  - env/redis.env.template
+  - env/searxng.env.template
+  - env/tika.env.template
+  - env/watchtower.env.template
+  - config/mcp/config.json.template
+  - config/nginx/conf.d/default.conf.template
+inputs:
+  - key: host
+    charlimit: 16
+    placeholder: localhost
+    title: Host
+    default: localhost
+    value:
+  - key: port
+    charlimit: 5
+    placeholder: 4000
+    title: Port
+    default: 4000
+    value:
+  - key: secretkey
+    type: dynamic:RandStr 16
+  - key: postgrespass
+    type: dynamic:RandStr 16
+assignments:
+  - service: auth
+    name: JWT_SECRET
+    format: "%s"
+    inputs:
+      - secretkey
+  - service: compose
+    name: PORT
+    format: "%s"
+    inputs:
+      - port
+  - service: edgetts
+    name: DEFAULT_VOICE
+    format: "en-AU-NatashaNeural"
+  - service: mcpo
+    name: DATABASE_URL
+    format: "postgresql://owui-user:%s@postgres/owui"
+    inputs:
+      - postgrespass
+  - service: mcpo
+    name: TIMEZONE
+    format: America/Chicago
+  - service: nginx
+    name: DOMAIN_NAME
+    format: "%s"
+    inputs:
+      - host
+  - service: openwebui
+    name: DATABASE_URL
+    format: "postgresql://owui-user:%s@postgres/owui"
+    inputs:
+      - postgrespass
+  - service: openwebui
+    name: PGVECTOR_DB_URL
+    format: "postgresql://owui-user:%s@postgres/owui"
+    inputs:
+      - postgrespass
+  - service: openwebui
+    name: WEBUI_URL
+    format: "http://%s"
+    inputs:
+      - host
+  - service: openwebui
+    name: WEBUI_SECRET_KEY
+    format: "%s"
+    inputs:
+      - secretkey
+  - service: searxng
+    name: SEARXNG_BASE_URL
+    format: "http://%s:%s/searxng"
+    inputs:
+      - host
+      - port
+  - service: postgres
+    name: POSTGRES_DB
+    format: "owui"
+  - service: postgres
+    name: POSTGRES_PASSWORD
+    format: "%s"
+    inputs:
+      - postgrespass
+  - service: postgres
+    name: POSTGRES_USER
+    format: "owui-user"
+  - service: searxng
+    name: SEARXNG_REDIS_URL
+    format: "redis://redis:6379/1"
+  - service: searxng
+    name: SEARXNG_SECRET
+    format: "%s"
+    inputs:
+      - secretkey
