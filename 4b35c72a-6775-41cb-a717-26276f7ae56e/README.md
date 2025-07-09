@@ -182,19 +182,19 @@ Generates a JSON document with the markdown text included. Changes to the config
 
 ```sh
 curl -X POST "http://localhost:3000/docling/v1alpha/convert/source" \
-    -H "Cookie: token=<add-jwt-token>"
+    -H "Cookie: token=<add-jwt-token>" \
     -H "accept: application/json" \
     -H "Content-Type: application/json" \
-    -d '{
-      "options": {
-        "do_picture_description": false,
-        "image_export_mode": "embedded",
-        "images_scale": 2.0,
-        "include_images": false,
-        "return_as_file": false,
-        "to_formats": ["md"]
-      },
-      "http_sources": [{ "url": "https://arxiv.org/pdf/2408.09869" }]
+    -d '{ \
+      "options": { \
+        "do_picture_description": false, \
+        "image_export_mode": "embedded", \
+        "images_scale": 2.0, \
+        "include_images": false, \
+        "return_as_file": false, \
+        "to_formats": ["md"] \
+      }, \
+      "http_sources": [{ "url": "https://arxiv.org/pdf/2408.09869" }] \
     }'
 ```
 
@@ -214,16 +214,16 @@ Generate Spanish speech from a speaker with a Spanish accent.
 
 ```sh
 curl -X POST "http://localhost:3000/edgetts/v1/audio/speech" \
-    -H "Cookie: token=<add-jwt-token>"
+    -H "Cookie: token=<add-jwt-token>" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer your_api_key_here" \
-    -d '{
-      "input": "Hola! Mi nombre es Alonso",
-      "response_format": "mp3",
-      "speed": 1,
-      "stream": true,
-      "voice": "es-US-AlonsoNeural",
-      "model": "tts-1-hd"
+    -d '{ \
+      "input": "Hola! Mi nombre es Alonso", \
+      "response_format": "mp3", \
+      "speed": 1, \
+      "stream": true, \
+      "voice": "es-US-AlonsoNeural", \
+      "model": "tts-1-hd" \
     }' > alonso-es-hola.mp3
 ```
 
@@ -233,16 +233,16 @@ Generates English speech from a speaker with an English accent.
 
 ```sh
 curl -X POST "http://localhost:3000/edgetts/v1/audio/speech" \
-    -H "Cookie: token=<add-jwt-token>"
+    -H "Cookie: token=<add-jwt-token>" \
     -H "Content-Type: application/json" \
     -H "Authorization: Bearer your_api_key_here" \
-    -d '{
-      "input": "Hi, my name is Wayland. This is an audio example.",
-      "response_format": "mp3",
-      "speed": 1,
-      "stream": true,
-      "voice": "en-US-AndrewMultilingualNeural",
-      "model": "tts-1-hd"
+    -d '{ \
+      "input": "Hi, my name is Wayland. This is an audio example.", \
+      "response_format": "mp3", \
+      "speed": 1, \
+      "stream": true, \
+      "voice": "en-US-AndrewMultilingualNeural", \
+      "model": "tts-1-hd" \
     }' > wayland-intro.mp3
 ```
 
@@ -254,9 +254,9 @@ curl -X POST "http://localhost:3000/edgetts/v1/audio/speech" \
 Generates meta data from a provided url. More information can be found via the [Metadata Resource documentation](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=148639291#TikaServer-MetadataResource)
 
 ```sh
-curl https://arxiv.org/abs/2408.09869v5 > 2408.09869v5.pdf
+curl https://arxiv.org/pdf/2408.09869v5 > 2408.09869v5.pdf
 curl http://localhost:3000/tika/meta \
-    -H "Cookie: token=<add-jwt-token>"
+    -H "Cookie: token=<add-jwt-token>" \
     -H "Accept: application/json" -T 2408.09869v5.pdf 
 ```
 
@@ -265,9 +265,9 @@ curl http://localhost:3000/tika/meta \
 Generates HTML from a provided url. More information can be found via the [Tika Resource Documentation](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=148639291#TikaServer-GettheTextofaDocument)
 
 ```sh
-curl https://arxiv.org/abs/2408.09869v5 > 2408.09869v5.pdf
+curl https://arxiv.org/pdf/2408.09869v5 > 2408.09869v5.pdf
 curl http://localhost:3000/tika/tika \
-    -H "Cookie: token=<add-jwt-token>"
+    -H "Cookie: token=<add-jwt-token>" \
     -H "Accept: text/html" -T 2408.09869v5.pdf 
 ```
 
@@ -276,9 +276,9 @@ curl http://localhost:3000/tika/tika \
 Generates plain text from a provided url. More information can be found via the [Tika Resource Documentation](https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=148639291#TikaServer-GettheTextofaDocument)
 
 ```sh
-curl https://arxiv.org/abs/2408.09869v5 > 2408.09869v5.pdf
+curl https://arxiv.org/pdf/2408.09869v5 > 2408.09869v5.pdf
 curl http://localhost:3000/tika/tika \
-    -H "Cookie: token=<add-jwt-token>"
+    -H "Cookie: token=<add-jwt-token>" \
     -H "Accept: text/plain" -T 2408.09869v5.pdf 
 ```
 
