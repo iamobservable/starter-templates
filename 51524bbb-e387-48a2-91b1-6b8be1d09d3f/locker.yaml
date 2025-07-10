@@ -25,7 +25,7 @@ inputs:
     type: dynamic:RandStr 16
 assignments:
   - service: compose
-    name: PORT
+    name: HOST_PORT
     format: "%s"
     inputs:
       - port
