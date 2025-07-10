@@ -46,7 +46,6 @@ how small—would go a long way. Together, we can keep this community thriving!
 The N8N Basic Template includes the following. A [Service Architecture Diagram](https://github.com/iamobservable/starter-templates/blob/main/51524bbb-e387-48a2-91b1-6b8be1d09d3f/docs/service-architecture-diagram.md) is also available that describes how the components are connected.
 
 - **[N8N](https://docs.n8n.io/)**: Leading visual editor for fast iteration where you see results instantly. Build what you need with native nodes or custom code – perfect for both everyday automations and complex AI agent workflows
-- **[Traefik](https://traefik.io/)**: The Cloud Native Application Proxy
 - **[Ollama](https://ollama.com/)**: Local service API serving open source large language models
 - **[Postgresql](https://www.postgresql.org/)/[PgVector](https://github.com/pgvector/pgvector)**: (default PERSISTENCE ENGINE) A free and open-source relational database management system (RDBMS) emphasizing extensibility and SQL compliance (has vector addon)
 - **[Watchtower](https://github.com/containrrr/watchtower)**: Automated Docker container for updating container images automatically
