@@ -1,0 +1,70 @@
+services:
+  n8n:
+    depends_on:
+      - watchtower
+    env_file: env/n8n.env
+    healthcheck:
+      interval: 30s
+      retries: 3
+      start_period: 60s
+      test: curl --fail http://127.0.0.1:5678/healthz > /dev/null 2>&1 || exit 1
+      timeout: 10s
+    image: docker.n8n.io/n8nio/n8n
+    ports:
+      - 5678:5678
+    restart: unless-stopped
+    volumes:
+      - n8n:/home/node/.n8n
+
+  ollama:
+    depends_on:
+      - watchtower
+    deploy: &gpu-deploy
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    env_file: env/ollama.env
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_period: 10s
+      test: ollama show qwen3:0.6b
+      timeout: 3s
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      - ollama:/root/.ollama
+
+  postgres:
+    depends_on:
+      - watchtower
+    env_file: env/postgres.env
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_period: 20s
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      timeout: 5s
+    image: pgvector/pgvector:pg15
+    restart: unless-stopped
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  watchtower:
+    command: --cleanup --debug --interval 300
+    env_file: env/watchtower.env
+    image: containrrr/watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  n8n:
+    external: false
+  ollama:
+    external: false
+  postgres:
+    external: false
