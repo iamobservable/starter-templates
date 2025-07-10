@@ -100,19 +100,9 @@ Model Context Protocol (MCP) is a configurable set of tools, resources, prompts,
 a structured way to expose local functionality to the LLM. Examples are providing access to the local file system, 
 searching the internet, interacting with git or github, and much more.
 
-#### Automatic Setup (COMING SHORTLY)
-
-
-```clipboard
-http://mcp:8000/time
-```
-```clipboard
-http://mcp:8000/postgres
-```
-
-<img width="494" alt="owui-settings-tools-general-dialog" src="https://github.com/user-attachments/assets/7824c8c2-7e6a-4619-ae31-85d0abab5af5" />
-
 #### Initial configuration
+
+<img width="745" alt="image" src="https://github.com/user-attachments/assets/ae93c255-9473-440c-a313-fd267cb7296c" />
 
 Configurations for MCP services can be found in the [conf/mcp/config.json.template](https://github.com/iamobservable/starter-templates/blob/main/4b35c72a-6775-41cb-a717-26276f7ae56e/conf/mcp/config.json.template#)) file. Links below in the table describe the initially configuration.
 
