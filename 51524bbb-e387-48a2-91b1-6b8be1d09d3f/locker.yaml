@@ -1,0 +1,42 @@
+id: 51524bbb-e387-48a2-91b1-6b8be1d09d3f
+title: N8N Basic Template
+description: The N8N Basic Template is a quick start for setting up N8N
+url: "https://github.com/iamobservable/starter-templates/51524bbb-e387-48a2-91b1-6b8be1d09d3f"
+files:
+  - compose.yaml.template
+  - env/n8n.env.template
+  - env/ollama.env.template
+  - env/postgres.env.template
+  - env/watchtower.env.template
+inputs:
+  - key: host
+    charlimit: 16
+    placeholder: localhost
+    title: Host
+    default: localhost
+    value:
+  - key: port
+    charlimit: 5
+    placeholder: 5678
+    title: Port
+    default: 5678
+    value:
+  - key: postgrespass
+    type: dynamic:RandStr 16
+assignments:
+  - service: compose
+    name: PORT
+    format: "%s"
+    inputs:
+      - port
+  - service: postgres
+    name: POSTGRES_DB
+    format: "n8n"
+  - service: postgres
+    name: POSTGRES_PASSWORD
+    format: "%s"
+    inputs:
+      - postgrespass
+  - service: postgres
+    name: POSTGRES_USER
+    format: "n8n-user"
