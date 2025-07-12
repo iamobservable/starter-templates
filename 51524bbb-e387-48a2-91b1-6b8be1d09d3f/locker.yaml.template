@@ -1,7 +1,7 @@
 id: 51524bbb-e387-48a2-91b1-6b8be1d09d3f
 title: N8N Basic Template
 description: The N8N Basic Template is a quick start for setting up N8N
-url: "https://github.com/iamobservable/starter-templates/51524bbb-e387-48a2-91b1-6b8be1d09d3f"
+url: "https://github.com/iamobservable/starter-templates/tree/main/51524bbb-e387-48a2-91b1-6b8be1d09d3f"
 files:
   - compose.yaml.template
   - env/n8n.env.template

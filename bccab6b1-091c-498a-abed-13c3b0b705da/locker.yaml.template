@@ -1,7 +1,7 @@
 id: bccab6b1-091c-498a-abed-13c3b0b705da
 title: Open WebUI Starter template - No GPU
 description: The Open WebUI Starter default template with a preset configuration.
-url: "https://github.com/iamobservable/open-webui-starter"
+url: "https://github.com/iamobservable/starter-templates/tree/main/bccab6b1-091c-498a-abed-13c3b0b705da"
 files:
   - compose.yaml.template
   - env/auth.env.template
