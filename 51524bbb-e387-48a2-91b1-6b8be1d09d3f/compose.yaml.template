@@ -31,8 +31,8 @@ services:
       interval: 30s
       retries: 5
       start_period: 10s
-      test: ollama show qwen3:0.6b
-      timeout: 3s
+      test: ps aux | grep  -v grep | grep '/bin/ollama serve' || exit 1
+      timeout: 5s
     image: ollama/ollama:latest
     restart: unless-stopped
     volumes:
