@@ -5,7 +5,7 @@ services:
       interval: 30s
       retries: 5
       start_period: 10s
-      test: curl --fail http://127.0.0.1:5001/health || exit 1
+      test: wget -qO- http://127.0.0.1:5001/health > /dev/null || exit 1
       timeout: 5s
     image: quay.io/docling-project/docling-serve:latest
     restart: unless-stopped
@@ -14,12 +14,6 @@ services:
     depends_on:
       - watchtower
     env_file: env/edgetts.env
-    healthcheck:
-      interval: 30s
-      retries: 5
-      start_period: 5s
-      test: "curl --fail http://127.0.0.1:5050/voices -H 'Authorization: Bearer your_api_key_here' || exit 1"
-      timeout: 5s
     image: travisvn/openai-edge-tts:latest
     restart: unless-stopped
 
@@ -28,6 +22,12 @@ services:
     depends_on:
       - watchtower
     env_file: env/mcp.env
+    healthcheck:
+      interval: 30s
+      retries: 5
+      start_period: 5s
+      test: "curl -fsSL http://127.0.0.1:8000/time/get_current_time -H 'Content-Type: application/json' -d '{\"timezone\": \"America/Chicago\"}' | grep -v grep | grep 'timezone' || exit 1"
+      timeout: 5s
     image: ghcr.io/open-webui/mcpo:latest
     restart: unless-stopped
     volumes:
@@ -41,8 +41,8 @@ services:
       interval: 30s
       retries: 5
       start_period: 10s
-      test: curl --fail http://127.0.0.1:11434/api/version || exit 1
-      timeout: 3s
+      test: ps aux | grep  -v grep | grep '/bin/ollama serve' || exit 1
+      timeout: 5s
     image: ollama/ollama:latest
     restart: unless-stopped
     volumes:
@@ -63,8 +63,8 @@ services:
       interval: 30s
       retries: 5
       start_period: 10s
-      test: curl --fail http://127.0.0.1:8080/health || exit 1
-      timeout: 3s
+      test: curl --fail http://localhost:8080/health || exit 1
+      timeout: 5s
     image: ghcr.io/open-webui/open-webui:main
     ports:
       - 3000:8080
@@ -116,8 +116,8 @@ services:
       interval: 30s
       retries: 5
       start_period: 10s
-      test: curl --fail http://127.0.0.1:8080/ || exit 1
-      timeout: 3s
+      test: wget -qO- http://127.0.0.1:8080/ > /dev/null || exit 1
+      timeout: 5s
     image: searxng/searxng:2025.5.18-5dff826
     logging:
       driver: "json-file"
@@ -134,7 +134,7 @@ services:
       interval: 30s
       retries: 5
       start_period: 5s
-      test: curl --fail http://127.0.0.1:9998/tika || exit 1
+      test: wget -qO- http://127.0.0.1:9998/tika > /dev/null || exit 1
       timeout: 5s
     image: apache/tika:latest-full
     restart: unless-stopped
