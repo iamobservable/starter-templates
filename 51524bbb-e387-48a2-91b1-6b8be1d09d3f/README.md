@@ -15,11 +15,11 @@ about self-hosting N8N in the [N8N Docker Compose Docs](https://docs.n8n.io/host
 
 ## Table of Contents
 1. [Connect](#-connect-with-the-observable-world-community)
-2. [Donations](#service-examples)
+2. [Subscriptions & Donations](#%EF%B8%8F-subscriptions--donations)
 3. [Tooling and Applications](#tooling-and-applications)
-5. [Additional Setup](#additional-setup)
-7. [Contribution](#contribution)
-8. [License](#license)
+4. [Additional Setup](#additional-setup)
+5. [Contribution](#-jjcontribution)
+6. [License](#license)
 
 ---
 
