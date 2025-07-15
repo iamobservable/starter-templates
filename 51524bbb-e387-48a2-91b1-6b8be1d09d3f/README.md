@@ -18,7 +18,7 @@ about self-hosting N8N in the [N8N Docker Compose Docs](https://docs.n8n.io/host
 2. [Subscriptions & Donations](#%EF%B8%8F-subscriptions--donations)
 3. [Tooling and Applications](#tooling-and-applications)
 4. [Additional Setup](#additional-setup)
-5. [Contribution](#-jjcontribution)
+5. [Contribution](#-contribution)
 6. [License](#license)
 
 ---
