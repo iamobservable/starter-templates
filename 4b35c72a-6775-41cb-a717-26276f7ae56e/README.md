@@ -17,12 +17,12 @@ This template is used in combination with the [Open WebUI Starter project](https
 
 ## Table of Contents
 1. [Connect](#-connect-with-the-observable-world-community)
-2. [Donations](#service-examples)
+2. [Subscriptions & Donations](#%EF%B8%8F-subscriptions--donations)
 3. [Tooling and Applications](#tooling-and-applications)
 4. [JWT Auth Validator Purpose](#jwt-auth-validator-purpose)
 5. [Additional Setup](#additional-setup)
 6. [Service Examples](#service-examples)
-7. [Contribution](#contribution)
+7. [Contribution](#-contribution)
 8. [License](#license)
 
 ---

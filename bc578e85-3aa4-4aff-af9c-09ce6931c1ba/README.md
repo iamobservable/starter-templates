@@ -17,10 +17,10 @@ This template is used in combination with the [Open WebUI Starter project](https
 
 ## Table of Contents
 1. [Connect](#-connect-with-the-observable-world-community)
-2. [Donations](#service-examples)
+2. [Subscriptions & Donations](#%EF%B8%8F-subscriptions--donations)
 3. [Tooling and Applications](#tooling-and-applications)
 4. [Additional Setup](#additional-setup)
-5. [Contribution](#contribution)
+5. [Contribution](#-contribution)
 6. [License](#license)
 
 ---
