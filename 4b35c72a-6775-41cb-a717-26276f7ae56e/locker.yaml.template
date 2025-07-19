@@ -42,7 +42,7 @@ assignments:
     inputs:
       - secretkey
   - service: compose
-    name: PORT
+    name: HOST_PORT
     format: "%s"
     inputs:
       - port
