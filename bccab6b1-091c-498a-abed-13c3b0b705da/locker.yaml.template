@@ -4,18 +4,6 @@ description: The Open WebUI Starter default template with a preset configuration
 url: "https://github.com/iamobservable/starter-templates/tree/main/bccab6b1-091c-498a-abed-13c3b0b705da"
 files:
   - compose.yaml.template
-  - env/auth.env.template
-  - env/docling.env.template
-  - env/edgetts.env.template
-  - env/mcp.env.template
-  - env/nginx.env.template
-  - env/ollama.env.template
-  - env/openwebui.env.template
-  - env/postgres.env.template
-  - env/redis.env.template
-  - env/searxng.env.template
-  - env/tika.env.template
-  - env/watchtower.env.template
   - config/mcp/config.json.template
   - config/nginx/conf.d/default.conf.template
 inputs:
@@ -37,73 +25,314 @@ inputs:
     type: dynamic:RandStr 16
 assignments:
   - service: auth
+    name: GIN_MODE
+    format: "release"
+    path: "env/auth.env.template"
+  - service: auth
     name: JWT_SECRET
     format: "%s"
     inputs:
       - secretkey
+    path: "env/auth.env.template"
   - service: compose
     name: PORT
     format: "%s"
     inputs:
       - port
+  - service: docling
+    name: DOCLING_SERVE_ENABLE_UI
+    format: "true"
+    path: "env/docling.env.template"
+  - service: edgetts
+    name: DEFAULT_RESPONSE_FORMAT
+    format: "mp3"
+    path: "env/edgetts.env.template"
+  - service: edgetts
+    name: DEFAULT_SPEED
+    format: "1.0"
+    path: "env/edgetts.env.template"
   - service: edgetts
     name: DEFAULT_VOICE
     format: "en-AU-NatashaNeural"
-  - service: mcpo
+    path: "env/edgetts.env.template"
+  - service: mcp
     name: DATABASE_URL
     format: "postgresql://owui-user:%s@postgres/owui"
     inputs:
       - postgrespass
-  - service: mcpo
+    path: "env/mcp.env.template"
+  - service: mcp
     name: TIMEZONE
-    format: America/Chicago
+    format: "America/Chicago"
+    path: "env/mcp.env.template"
   - service: nginx
-    name: DOMAIN_NAME
+    name: NGINX_ENVSUBST_OUTPUT_DIR
+    format: "/etc/nginx/conf.d"
+    path: "env/nginx.env.template"
+  - service: nginx
+    name: NGINX_ENVSUBST_TEMPLATE_DIR
+    format: "/etc/nginx/templates"
+    path: "env/nginx.env.template"
+  - service: nginx
+    name: NGINX_ENVSUBST_TEMPLATE_SUFFIX
+    format: ".template"
+    path: "env/nginx.env.template"
+  - service: nginx
+    name: NGINX_HOST
     format: "%s"
     inputs:
       - host
+    path: "env/nginx.env.template"
+  - service: ollama
+    name: OLLAMA_CONTEXT_LENGTH
+    format: "8192"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_DEBUG
+    format: "0"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_FLASH_ATTENTION
+    format: "true"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_HOST
+    format: "0.0.0.0:11434"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_LOAD_TIMOUT
+    format: "10m"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_MLOCK
+    format: "false"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_MMAP
+    format: "false"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_NUM_GPU
+    format: "0"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_NUM_THREAD
+    format: "0"
+    path: "env/ollama.env.template"
+  - service: openwebui
+    name: ANONYMIZED_TELEMETRY
+    format: "false"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: AUDIO_TTS_API_KEY
+    format: "your_api_key_here"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: AUDIO_TTS_ENGINE
+    format: "openai"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: AUDIO_TTS_MODEL
+    format: "tts-1-hd"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: AUDIO_TTS_OPENAI_API_BASE_URL
+    format: "http://edgetts:5050/v1"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: AUDIO_TTS_OPENAI_API_KEY
+    format: "your_api_key_here"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: AUDIO_TTS_VOICE
+    format: "en-US-EmmaMultilingualNeural"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: CONTENT_EXTRACTION_ENGINE
+    format: "tika"
+    path: "env/openwebui.env.template"
   - service: openwebui
     name: DATABASE_URL
     format: "postgresql://owui-user:%s@postgres/owui"
     inputs:
       - postgrespass
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: DOCLING_SERVER_URL
+    format: "http://docling:5001"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: ENABLE_EVALUATION_ARENA_MODELS
+    format: "false"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: ENABLE_IMAGE_GENERATION
+    format: "false"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: ENABLE_OLLAMA_API
+    format: "true"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: ENABLE_OPENAI_API
+    format: "false"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: ENABLE_RAG_WEB_SEARCH
+    format: "true"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: ENABLE_WEB_SEARCH
+    format: "true"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: ENABLE_WEBSOCKET_SUPPORT
+    format: "true"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: ENV
+    format: "dev"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: GLOBAL_LOG_LEVEL
+    format: "info"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: OLLAMA_BASE_URLS
+    format: "http://ollama:11434"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: PDF_EXTRACT_IMAGES
+    format: "true"
+    path: "env/openwebui.env.template"
   - service: openwebui
     name: PGVECTOR_DB_URL
     format: "postgresql://owui-user:%s@postgres/owui"
     inputs:
       - postgrespass
+    path: "env/openwebui.env.template"
   - service: openwebui
-    name: WEBUI_URL
-    format: "http://%s"
+    name: RAG_EMBEDDING_ENGINE
+    format: "ollama"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: RAG_ENBEDDING_MODEL
+    format: "%s"
     inputs:
-      - host
+      - embedding_model
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: RAG_OLLAMA_BASE_URL
+    format: "http://ollama:11434"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: RAG_TEXT_SPLITTER
+    format: "token"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: RAG_WEB_SEARCH_CONCURRENT_REQUESTS
+    format: "10"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: RAG_WEB_SEARCH_ENGINE
+    format: "searxng"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: RAG_WEB_SEARCH_RESULT_COUNT
+    format: "6"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: REDIS_KEY_PREFIX
+    format: "open-webui"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: REDIS_URL
+    format: "redis://redis:6379/2"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: SEARXNG_QUERY_URL
+    format: "http://searxng:8080/search?q=<query>"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: TIKA_SERVER_URL
+    format: "http://tika:9998"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: TOOL_SERVER_CONNECTIONS
+    format: "[{\"url\":\"http://mcp:8000/time\",\"path\":\"openapi.json\",\"auth_type\":\"none\",\"key\":\"\",\"config\":{\"enable\":true,\"access_control\":null},\"info\":{\"name\":\"time\",\"description\":\"\"}},{\"url\":\"http://mcp:8000/postgres\",\"path\":\"openapi.json\",\"auth_type\":\"none\",\"key\":\"\",\"config\":{\"enable\":true,\"access_control\":null},\"info\":{\"name\":\"postgres\",\"description\":\"\"}}]"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: USE_CUDA_DOCKER
+    format: "false"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: VECTOR_DB
+    format: "pgvector"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: WEB_SEARCH_ENGINE
+    format: "searxng"
+    path: "env/openwebui.env.template"
   - service: openwebui
     name: WEBUI_SECRET_KEY
     format: "%s"
     inputs:
       - secretkey
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: WEBUI_URL
+    format: "http://%s"
+    inputs:
+      - host
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: WEBSOCKET_MANAGER
+    format: "redis"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: WEBSOCKET_REDIS_URL
+    format: "redis://redis:6379/3"
+    path: "env/openwebui.env.template"
+  - service: openwebui
+    name: WHISPER_MODEL_AUTO_UPDATE
+    format: "false"
+    path: "env/openwebui.env.template"
+  - service: postgres
+    name: POSTGRES_DB
+    format: "owui"
+    path: "env/postgres.env.template"
+  - service: postgres
+    name: POSTGRES_HOST
+    format: "owui"
+    path: "env/postgres.env.template"
+  - service: postgres
+    name: POSTGRES_PASSWORD
+    format: "%s"
+    inputs:
+      - postgrespass
+    path: "env/postgres.env.template"
+  - service: postgres
+    name: POSTGRES_USER
+    format: "owui-user"
+    path: "env/postgres.env.template"
+  - service: redis
+    name: RI_PROXY_PATH
+    format: "redis"
+    path: "env/redis.env.template"
   - service: searxng
     name: SEARXNG_BASE_URL
     format: "http://%s:%s/searxng"
     inputs:
       - host
       - port
-  - service: postgres
-    name: POSTGRES_DB
-    format: "owui"
-  - service: postgres
-    name: POSTGRES_PASSWORD
-    format: "%s"
-    inputs:
-      - postgrespass
-  - service: postgres
-    name: POSTGRES_USER
-    format: "owui-user"
+    path: "env/searxng.env.template"
   - service: searxng
     name: SEARXNG_REDIS_URL
     format: "redis://redis:6379/1"
+    path: "env/searxng.env.template"
   - service: searxng
     name: SEARXNG_SECRET
     format: "%s"
     inputs:
       - secretkey
+    path: "env/searxng.env.template"

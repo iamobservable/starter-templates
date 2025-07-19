@@ -4,10 +4,6 @@ description: The N8N Basic Template is a quick start for setting up N8N
 url: "https://github.com/iamobservable/starter-templates/tree/main/51524bbb-e387-48a2-91b1-6b8be1d09d3f"
 files:
   - compose.yaml.template
-  - env/n8n.env.template
-  - env/ollama.env.template
-  - env/postgres.env.template
-  - env/watchtower.env.template
 inputs:
   - key: host
     charlimit: 16
@@ -29,14 +25,129 @@ assignments:
     format: "%s"
     inputs:
       - port
+  - service: n8n
+    name: DB_POSTGRESDB_DATABASE
+    format: "%s"
+    inputs:
+      - postgrespass
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: DB_POSTGRESDB_HOST
+    format: "postgres"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: DB_POSTGRESDB_PASSWORD
+    format: "%s"
+    inputs:
+      - postgrespass
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: DB_POSTGRESDB_PORT
+    format: "5432"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: DB_POSTGRESDB_SCHEMA
+    format: "public"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: DB_POSTGRESDB_USER
+    format: "n8n-user"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: DB_TYPE
+    format: "postgresdb"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: GENERIC_TIMEZONE
+    format: "America/Chicago"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: N8N_DIAGNOSTICS_CONFIG_BACKEND
+    format: ""
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: N8N_DIAGNOSTICS_CONFIG_FRONTEND
+    format: ""
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: N8N_DIAGNOSTICS_ENABLED
+    format: "false"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+    format: "true"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: N8N_ONBOARDING_FLOW_DISABLED
+    format: "true"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: N8N_RUNNERS_ENABLED
+    format: "true"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: N8N_TEMPLATES_ENABLED
+    format: "false"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: N8N_VERSION_NOTIFICATIONS_ENABLED
+    format: "false"
+    path: "env/n8n.env.template"
+  - service: n8n
+    name: TZ
+    format: "America/Chicago"
+    path: "env/n8n.env.template"
+  - service: ollama
+    name: OLLAMA_CONTEXT_LENGTH
+    format: "8192"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_DEBUG
+    format: "0"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_FLASH_ATTENTION
+    format: "true"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_HOST
+    format: "0.0.0.0:11434"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_LOAD_TIMOUT
+    format: "10m"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_MLOCK
+    format: "false"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_MMAP
+    format: "false"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_NUM_GPU
+    format: "0"
+    path: "env/ollama.env.template"
+  - service: ollama
+    name: OLLAMA_NUM_THREAD
+    format: "0"
+    path: "env/ollama.env.template"
   - service: postgres
     name: POSTGRES_DB
     format: "n8n"
+    path: "env/postgres.env.template"
+  - service: postgres
+    name: POSTGRES_HOST
+    format: "owui"
+    path: "env/postgres.env.template"
   - service: postgres
     name: POSTGRES_PASSWORD
     format: "%s"
     inputs:
       - postgrespass
+    path: "env/postgres.env.template"
   - service: postgres
     name: POSTGRES_USER
     format: "n8n-user"
+    path: "env/postgres.env.template"
