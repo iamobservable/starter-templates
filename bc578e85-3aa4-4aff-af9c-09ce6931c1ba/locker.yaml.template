@@ -4,93 +4,358 @@ description: The Open WebUI Starter template without a proxy
 url: "https://github.com/iamobservable/starter-templates/tree/main/bc578e85-3aa4-4aff-af9c-09ce6931c1ba"
 files:
   - compose.yaml.template
-  - env/docling.env.template
-  - env/edgetts.env.template
-  - env/mcp.env.template
-  - env/ollama.env.template
-  - env/openwebui.env.template
-  - env/postgres.env.template
-  - env/redis.env.template
-  - env/searxng.env.template
-  - env/tika.env.template
-  - env/watchtower.env.template
   - config/mcp/config.json.template
 inputs:
-  - key: host
-    charlimit: 16
-    placeholder: localhost
-    title: Host
+  - key: OWUI_HOST
+    title: What ip or domain name should we use
     default: localhost
-    value:
-  - key: port
-    charlimit: 5
-    placeholder: 3000
-    title: Port
-    default: 3000
-    value:
-  - key: secretkey
+  - key: HOST_PORT
+    title: What port should we use
+    default: 4000
+  - key: DECISION_MODEL
+    title: What decision model should we use
+    default: qwen3:0.6b
+  - key: EMBEDDING_MODEL
+    title: What embedding model should we use
+    default: nomic-embed-text:latest
+  - key: SECRETKEY
     type: dynamic:RandStr 16
-  - key: postgrespass
+  - key: POSTGRESPASS
     type: dynamic:RandStr 16
+  - key: TIMEZONE
+    type: dynamic:Timezone
 assignments:
   - service: compose
-    name: PORT
-    format: "%s"
+    format: |
+      services:
+        docling:
+          env_file: env/docling.env
+          healthcheck:
+            interval: 30s
+            retries: 5
+            start_period: 10s
+            test: wget -qO- http://127.0.0.1:5001/health > /dev/null || exit 1
+            timeout: 5s
+          image: quay.io/docling-project/docling-serve:latest
+          restart: unless-stopped
+
+        edgetts:
+          depends_on:
+            - watchtower
+          env_file: env/edgetts.env
+          image: travisvn/openai-edge-tts:latest
+          restart: unless-stopped
+
+        mcp:
+          command: --config /app/conf/config.json
+          depends_on:
+            - watchtower
+          env_file: env/mcp.env
+          healthcheck:
+            interval: 30s
+            retries: 5
+            start_period: 5s
+            test: "curl -fsSL http://127.0.0.1:8000/time/get_current_time -H 'Content-Type: application/json' -d '{\\"timezone\\": \\"America/Chicago\\"}' | grep -v grep | grep 'timezone' || exit 1"
+            timeout: 5s
+          image: ghcr.io/open-webui/mcpo:latest
+          restart: unless-stopped
+          volumes:
+            - ./conf/mcp:/app/conf:ro
+
+        ollama:
+          depends_on:
+            - watchtower
+          env_file: env/ollama.env
+          healthcheck:
+            interval: 30s
+            retries: 5
+            start_period: 10s
+            test: ps aux | grep  -v grep | grep '/bin/ollama serve' || exit 1
+            timeout: 5s
+          image: ollama/ollama:latest
+          restart: unless-stopped
+          volumes:
+            - ollama:/root/.ollama
+
+        openwebui:
+          depends_on:
+            - docling
+            - postgres
+            - edgetts
+            - mcp
+            - ollama
+            - searxng
+            - tika
+            - watchtower
+          env_file: env/openwebui.env
+          healthcheck:
+            interval: 30s
+            retries: 5
+            start_period: 10s
+            test: curl --fail http://localhost:8080/health || exit 1
+            timeout: 5s
+          image: ghcr.io/open-webui/open-webui:main
+          ports:
+            - "%s:8080"
+          restart: unless-stopped
+          volumes:
+            - openwebui:/app/backend/data
+
+        postgres:
+          depends_on:
+            - watchtower
+          env_file: env/postgres.env
+          healthcheck:
+            interval: 30s
+            retries: 5
+            start_period: 20s
+            test: ["CMD-SHELL", "pg_isready -d $ -U $"]
+            timeout: 5s
+          image: pgvector/pgvector:pg15
+          restart: unless-stopped
+          volumes:
+            - postgres:/var/lib/postgresql/data
+
+        redis:
+          depends_on:
+            - watchtower
+          env_file: env/redis.env
+          healthcheck:
+            interval: 30s
+            retries: 5
+            start_period: 20s
+            test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+            timeout: 3s
+          image: redis/redis-stack:latest
+          restart: unless-stopped
+
+        searxng:
+          cap_add:
+            - CHOWN
+            - SETGID
+            - SETUID
+            - DAC_OVERRIDE
+          cap_drop:
+            - ALL
+          env_file: env/searxng.env
+          depends_on:
+            - redis
+            - watchtower
+          healthcheck:
+            interval: 30s
+            retries: 5
+            start_period: 10s
+            test: wget -qO- http://127.0.0.1:8080/ > /dev/null || exit 1
+            timeout: 5s
+          image: searxng/searxng:2025.5.18-5dff826
+          logging:
+            driver: "json-file"
+            options:
+              max-size: "1m"
+              max-file: "1"
+          restart: unless-stopped
+          volumes:
+            - searxng:/etc/searxng
+
+        tika:
+          env_file: env/tika.env
+          healthcheck:
+            interval: 30s
+            retries: 5
+            start_period: 5s
+            test: wget -qO- http://127.0.0.1:9998/tika > /dev/null || exit 1
+            timeout: 5s
+          image: apache/tika:latest-full
+          restart: unless-stopped
+
+        watchtower:
+          command: --cleanup --debug --interval 300
+          env_file: env/watchtower.env
+          image: containrrr/watchtower
+          restart: unless-stopped
+          volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+
+      volumes:
+        ollama:
+          external: false
+        openwebui:
+          external: false
+        postgres:
+          external: false
+        searxng:
+          external: false
     inputs:
-      - port
+      - HOST_PORT
+    path: "compose.yaml"
+  - service: docling
+    format: |
+      DOCLING_SERVE_ENABLE_UI=true
+    path: "env/docling.env"
   - service: edgetts
-    name: DEFAULT_VOICE
-    format: "en-AU-NatashaNeural"
+    format: |
+      DEFAULT_RESPONSE_FORMAT="mp3"
+      DEFAULT_SPEED="1.0"
+      DEFAULT_VOICE="en-AU-NatashaNeural"
+    path: "env/edgetts.env"
   - service: mcp
     name: DATABASE_URL
     format: "postgresql://owui-user:%s@postgres/owui"
     inputs:
       - postgrespass
+    path: "env/mcp.env"
   - service: mcp
-    name: TIMEZONE
-    format: America/Chicago
-  - service: openwebui
-    name: DATABASE_URL
-    format: "postgresql://owui-user:%s@postgres/owui"
+    format: |
+      {
+        "mcpServers": {
+          "time": {
+            "command": "uvx",
+            "args": ["mcp-server-time", "--local-timezone=%s"]
+          },
+          "postgres": {
+            "command": "npx",
+            "args": [
+              "-y",
+              "@modelcontextprotocol/server-postgres",
+              "postgresql://owui-user:%s@postgres/owui"
+            ]
+          }
+        }
+      }
     inputs:
-      - postgrespass
-  - service: openwebui
-    name: PGVECTOR_DB_URL
-    format: "postgresql://owui-user:%s@postgres/owui"
+      - TIMEZONE
+      - POSTGRESPASS
+    path: "conf/mcp/config.json"
+  - service: mcp
+    format: |
+      DATABASE_URL="postgresql://owui-user:%s@postgres/owui"
+      TIMEZONE="%s"
     inputs:
-      - postgrespass
+      - POSTGRESPASS
+      - TIMEZONE
+    path: "env/mcp.env"
+  - service: ollama
+    format: |
+      OLLAMA_CONTEXT_LENGTH=8192
+      OLLAMA_DEBUG=0
+      OLLAMA_FLASH_ATTENTION=false
+      OLLAMA_HOST="0.0.0.0:11434"
+      OLLAMA_LOAD_TIMOUT="10m"
+      OLLAMA_MLOCK=false
+      OLLAMA_MMAP=false
+      OLLAMA_NUM_GPU=0
+      OLLAMA_NUM_THREAD=0
+    path: "env/ollama.env"
   - service: openwebui
-    name: WEBUI_URL
-    format: "http://%s"
+    format: |
+      ANONYMIZED_TELEMETRY=false
+      AUDIO_TTS_API_KEY="your_api_key_here"
+      AUDIO_TTS_ENGINE="openai"
+      AUDIO_TTS_MODEL="tts-1-hd"
+      AUDIO_TTS_OPENAI_API_BASE_URL="http://edgetts:5050/v1"
+      AUDIO_TTS_OPENAI_API_KEY="your_api_key_here"
+      AUDIO_TTS_VOICE="en-US-EmmaMultilingualNeural"
+      CONTENT_EXTRACTION_ENGINE="tika"
+      DATABASE_URL="postgresql://owui-user:%s@postgres/owui"
+      DOCLING_SERVER_URL="http://docling:5001"
+      ENABLE_EVALUATION_ARENA_MODELS=false
+      ENABLE_IMAGE_GENERATION=false
+      ENABLE_OLLAMA_API=true
+      ENABLE_OPENAI_API=false
+      ENABLE_RAG_WEB_SEARCH=true
+      ENABLE_WEB_SEARCH=true
+      ENABLE_WEBSOCKET_SUPPORT=true
+      ENV="dev"
+      GLOBAL_LOG_LEVEL="info"
+      OLLAMA_BASE_URLS="http://ollama:11434"
+      PDF_EXTRACT_IMAGES=true
+      PGVECTOR_DB_URL="postgresql://owui-user:%s@postgres/owui"
+      RAG_EMBEDDING_ENGINE="ollama"
+      RAG_ENBEDDING_MODEL="%s"
+      RAG_OLLAMA_BASE_URL="http://ollama:11434"
+      RAG_TEXT_SPLITTER="token"
+      RAG_WEB_SEARCH_CONCURRENT_REQUESTS=10
+      RAG_WEB_SEARCH_ENGINE="searxng"
+      RAG_WEB_SEARCH_RESULT_COUNT=6
+      REDIS_KEY_PREFIX="open-webui"
+      REDIS_URL="redis://redis:6379/2"
+      SEARXNG_QUERY_URL="http://searxng:8080/search?q=<query>"
+      TIKA_SERVER_URL="http://tika:9998"
+      TOOL_SERVER_CONNECTIONS=[{"url":"http://mcp:8000/time","path":"openapi.json","auth_type":"none","key":"","config":{"enable":true,"access_control":null},"info":{"name":"time","description":""}},{"url":"http://mcp:8000/postgres","path":"openapi.json","auth_type":"none","key":"","config":{"enable":true,"access_control":null},"info":{"name":"postgres","description":""}}]
+      USE_CUDA_DOCKER=false
+      VECTOR_DB="pgvector"
+      WEB_SEARCH_ENGINE="searxng"
+      WEBUI_SECRET_KEY="%s"
+      WEBUI_URL="http://%s"
+      WEBSOCKET_MANAGER="redis"
+      WEBSOCKET_REDIS_URL="redis://redis:6379/3"
+      WHISPER_MODEL_AUTO_UPDATE=false
     inputs:
-      - host
-  - service: openwebui
-    name: WEBUI_SECRET_KEY
-    format: "%s"
+      - POSTGRESPASS
+      - POSTGRESPASS
+      - EMBEDDING_MODEL
+      - SECRETKEY
+      - OWUI_HOST
+    path: "env/openwebui.env"
+  - service: postgres
+    format: |
+      POSTGRES_DB="owui"
+      POSTGRES_PASSWORD="%s"
+      POSTGRES_USER="owui-user"
     inputs:
-      - secretkey
+      - POSTGRESPASS
+    path: "env/postgres.env"
+  - service: redis
+    format: |
+      RI_PROXY_PATH="redis"
+    path: "env/redis.env"
   - service: searxng
     name: SEARXNG_BASE_URL
     format: "http://%s:%s/searxng"
     inputs:
       - host
       - port
-  - service: postgres
-    name: POSTGRES_DB
-    format: "owui"
-  - service: postgres
-    name: POSTGRES_PASSWORD
-    format: "%s"
-    inputs:
-      - postgrespass
-  - service: postgres
-    name: POSTGRES_USER
-    format: "owui-user"
+    path: "env/searxng.env"
   - service: searxng
-    name: SEARXNG_REDIS_URL
-    format: "redis://redis:6379/1"
-  - service: searxng
-    name: SEARXNG_SECRET
-    format: "%s"
+    format: |
+      SEARXNG_BASE_URL="http://%s:%s/searxng"
+      SEARXNG_REDIS_URL="redis://redis:6379/1"
+      SEARXNG_SECRET="%s"
     inputs:
-      - secretkey
+      - OWUI_HOST
+      - HOST_PORT
+      - SECRETKEY
+    path: "env/searxng.env"
+  - service: tika
+    format: |
+      # Tika variables
+    path: "env/tika.env"
+  - service: watchtower
+    format: |
+      # https://containrrr.dev/shoutrrr/v0.8/services/discord/
+      # WATCHTOWER_NOTIFICATION_URL="discord://<token>@<webhookid>"
+    path: "env/watchtower.env"
+commands:
+  - name: "Start Ollama container"
+    command: "docker compose up ollama -d"
+  - name: "Download embedding model"
+    command: "docker compose exec ollama ollama pull %s"
+    inputs:
+      - EMBEDDING_MODEL
+  - name: "Download decision model"
+    command: "docker compose exec ollama ollama pull %s"
+    inputs:
+      - DECISION_MODEL
+  - name: "Start Postgres container"
+    command: "docker compose up postgres -d"
+  - name: "Start all containers"
+    command: "docker compose up -d"
+  - name: "Updating Searxng settings.yml"
+    command: docker compose exec searxng wget -q https://raw.githubusercontent.com/iamobservable/open-webui-starter/142adb5d8b87fd0a221381413d4d70e44f47b23d/conf/searxng/settings.yml.example -O /etc/searxng/settings.yml
+  - name: "Restarting Searxng"
+    command: "docker compose down searxng && docker compose up searxng -d"
+  - name: "Print Browser Link"
+    command: "echo View in browser at http://%s:%s/"
+    inputs:
+      - OWUI_HOST
+      - HOST_PORT

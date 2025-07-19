@@ -53,6 +53,91 @@ how small—would go a long way. Together, we can keep this community thriving!
 
 ---
 
+## Locker Yaml Definition
+
+The locker.yaml defines configuration templates for Docker-based application stacks. It's a declarative specification that allows users to create customizable, multi-service environments with user inputs, dynamic variable assignment, and automated setup commands.
+
+### File Definition with Key Descriptions
+
+**Core Structure:**
+- `id`: Unique UUID identifier for the template
+- `title`: Human-readable template name  
+- `description`: Template purpose explanation
+- `url`: Repository URL for the template
+- `files`: Array of template files to process (e.g., `compose.yaml.template`)
+- `inputs`: User-configurable variables and dynamic value generators
+- `assignments`: Mappings from inputs to configuration files with formatting
+- `commands`: Executable shell commands for post-creation setup and management
+
+### What are Inputs
+
+Inputs define variables that customize the deployment and come in two types:
+
+**Human Inputs** - User-prompted values with required fields:
+- `key`: Variable name (required)
+- `title`: Question shown to user (required)  
+- `default`: Default value (required)
+
+```yaml
+- key: NGINX_HOST
+  title: "What ip or domain name should we use"
+  default: localhost
+```
+
+**Dynamic Inputs** - Automatically generated values with required fields:
+- `key`: Variable name (required)
+- `type`: Generation method (required)
+
+```yaml
+- key: SECRETKEY
+  type: dynamic:RandStr 16
+```
+
+**Dynamic types include:**
+- `dynamic:RandStr N` - Random N-character string where N is any positive integer (e.g., `dynamic:RandStr 16`, `dynamic:RandStr 32`)
+- `dynamic:Timezone` - System timezone
+
+### What are Assignments  
+
+Assignments are used to set values in configuration files by mapping input variables to file content. They generate dynamically formatted values by substituting input variables into format templates using placeholders that conform to the Unix printf function specification.
+
+```yaml
+assignments:
+  - service: auth            # Service identifier
+    format: |               # Multi-line content template
+      GIN_MODE="release"
+      JWT_SECRET="%s"       # printf-style placeholders for variable substitution
+    inputs:
+      - SECRETKEY           # Variables substituted in order
+    path: "env/auth.env"    # Output file path
+```
+
+Assignments can be used with inputs to generate various file types: environment files, Docker Compose YAML, JSON configs, and Nginx templates. The format string supports complex multi-line content where variables are substituted using standard printf format specifiers (`%s`, `%d`, `%f`, etc.) in the order they appear in the inputs array.
+
+### What are Commands
+
+Commands define executable shell commands that can be executed after the project has been created. These are post-creation setup and management operations that automate common tasks like starting services, downloading models, or configuring components.
+
+```yaml
+commands:
+  - name: "Download embedding model"  # Human-readable description
+    command: "docker compose exec ollama ollama pull %s"  # Shell command with placeholders
+    inputs:
+      - EMBEDDING_MODEL     # Variables for substitution (optional)
+```
+
+Commands support variable substitution using printf-style placeholders and the inputs array. They are typically used for:
+- **Service management**: `docker compose up service -d`
+- **Model/asset downloads**: `docker compose exec ollama ollama pull %s` 
+- **Configuration updates**: `wget` commands for remote configs
+- **Status reporting**: `echo "View in browser at http://%s:%s/"`
+- **Multi-step setup sequences**: Ordered list of commands for complete environment initialization
+
+The specification supports complex multi-service stacks like the Open WebUI example with 12+ services including authentication, databases, LLM serving, and reverse proxies.
+
+
+---
+
 ## Dependencies
 
 - **[Starter](https://github.com/iamobservable/open-webui-starter)**: Tool for quickly creating docker compose environments based on predefine templates
