@@ -4,39 +4,176 @@ description: The N8N Basic Template is a quick start for setting up N8N
 url: "https://github.com/iamobservable/starter-templates/tree/main/51524bbb-e387-48a2-91b1-6b8be1d09d3f"
 files:
   - compose.yaml.template
-  - env/n8n.env.template
-  - env/ollama.env.template
-  - env/postgres.env.template
-  - env/watchtower.env.template
 inputs:
-  - key: host
-    charlimit: 16
-    placeholder: localhost
-    title: Host
-    default: localhost
-    value:
-  - key: port
-    charlimit: 5
-    placeholder: 5678
-    title: Port
+  - key: HOST_PORT
+    title: What port should we use
     default: 5678
-    value:
-  - key: postgrespass
+  - key: DECISION_MODEL
+    title: What decision model should we use
+    default: qwen3:0.6b
+  - key: EMBEDDING_MODEL
+    title: What embedding model should we use
+    default: nomic-embed-text:latest
+  - key: POSTGRESPASS
     type: dynamic:RandStr 16
+  - key: TIMEZONE
+    type: dynamic:Timezone
 assignments:
   - service: compose
     name: HOST_PORT
     format: "%s"
     inputs:
-      - port
+      - HOST_PORT
+    path: "compose.yaml"
+  - service: n8n
+    name: DB_POSTGRESDB_DATABASE
+    format: "n8n"
+    path: "env/n8n.env"
+  - service: n8n
+    name: DB_POSTGRESDB_HOST
+    format: "postgres"
+    path: "env/n8n.env"
+  - service: n8n
+    name: DB_POSTGRESDB_PASSWORD
+    format: "%s"
+    inputs:
+      - POSTGRESPASS
+    path: "env/n8n.env"
+  - service: n8n
+    name: DB_POSTGRESDB_PORT
+    format: "5432"
+    path: "env/n8n.env"
+  - service: n8n
+    name: DB_POSTGRESDB_SCHEMA
+    format: "public"
+    path: "env/n8n.env"
+  - service: n8n
+    name: DB_POSTGRESDB_USER
+    format: "n8n-user"
+    path: "env/n8n.env"
+  - service: n8n
+    name: DB_TYPE
+    format: "postgresdb"
+    path: "env/n8n.env"
+  - service: n8n
+    name: GENERIC_TIMEZONE
+    format: "%s"
+    inputs:
+      - TIMEZONE
+    path: "env/n8n.env"
+  - service: n8n
+    name: N8N_DIAGNOSTICS_CONFIG_BACKEND
+    format: ""
+    path: "env/n8n.env"
+  - service: n8n
+    name: N8N_DIAGNOSTICS_CONFIG_FRONTEND
+    format: ""
+    path: "env/n8n.env"
+  - service: n8n
+    name: N8N_DIAGNOSTICS_ENABLED
+    format: false
+    path: "env/n8n.env"
+  - service: n8n
+    name: N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS
+    format: true
+    path: "env/n8n.env"
+  - service: n8n
+    name: N8N_ONBOARDING_FLOW_DISABLED
+    format: true
+    path: "env/n8n.env"
+  - service: n8n
+    name: N8N_RUNNERS_ENABLED
+    format: true
+    path: "env/n8n.env"
+  - service: n8n
+    name: N8N_TEMPLATES_ENABLED
+    format: false
+    path: "env/n8n.env"
+  - service: n8n
+    name: N8N_VERSION_NOTIFICATIONS_ENABLED
+    format: false
+    path: "env/n8n.env"
+  - service: n8n
+    name: TZ
+    format: "%s"
+    inputs:
+      - TIMEZONE
+    path: "env/n8n.env"
+  - service: ollama
+    name: OLLAMA_CONTEXT_LENGTH
+    format: 8192
+    path: "env/ollama.env"
+  - service: ollama
+    name: OLLAMA_DEBUG
+    format: 0
+    path: "env/ollama.env"
+  - service: ollama
+    name: OLLAMA_FLASH_ATTENTION
+    format: true
+    path: "env/ollama.env"
+  - service: ollama
+    name: OLLAMA_HOST
+    format: "0.0.0.0:11434"
+    path: "env/ollama.env"
+  - service: ollama
+    name: OLLAMA_LOAD_TIMOUT
+    format: "10m"
+    path: "env/ollama.env"
+  - service: ollama
+    name: OLLAMA_MLOCK
+    format: false
+    path: "env/ollama.env"
+  - service: ollama
+    name: OLLAMA_MMAP
+    format: false
+    path: "env/ollama.env"
+  - service: ollama
+    name: OLLAMA_NUM_GPU
+    format: 0
+    path: "env/ollama.env"
+  - service: ollama
+    name: OLLAMA_NUM_THREAD
+    format: 0
+    path: "env/ollama.env"
   - service: postgres
     name: POSTGRES_DB
     format: "n8n"
+    path: "env/postgres.env"
   - service: postgres
     name: POSTGRES_PASSWORD
     format: "%s"
     inputs:
-      - postgrespass
+      - POSTGRESPASS
+    path: "env/postgres.env"
   - service: postgres
     name: POSTGRES_USER
     format: "n8n-user"
+    path: "env/postgres.env"
+  - service: watchtower
+    name: "# WATCHTOWER_NOTIFICATION_URL"
+    format: "discord://<token>@<webhookid>"
+    path: "env/watchtower.env"
+commands:
+  - name: "Start Ollama container"
+    command: "docker compose up ollama -d"
+  - name: "Download embedding model"
+    command: "docker compose exec ollama ollama pull %s"
+    inputs:
+      - EMBEDDING_MODEL
+  - name: "Download decision model"
+    command: "docker compose exec ollama ollama pull %s"
+    inputs:
+      - DECISION_MODEL
+  - name: "Start Postgres container"
+    command: "docker compose up postgres -d"
+  - name: "Start all containers"
+    command: "docker compose up -d"
+  - name: "Updating Searxng settings.yml"
+    command: docker compose exec searxng wget -q https://raw.githubusercontent.com/iamobservable/open-webui-starter/142adb5d8b87fd0a221381413d4d70e44f47b23d/conf/searxng/settings.yml.example -O /etc/searxng/settings.yml
+  - name: "Restarting Searxng"
+    command: "docker compose down searxng && docker compose up searxng -d"
+  - name: "Print Browser Link"
+    command: "echo View in browser at http://%s:%s/"
+    inputs:
+      - NGINX_HOST
+      - HOST_PORT

@@ -89,7 +89,8 @@ searching the internet, interacting with git or github, and much more.
 
 <img width="745" alt="image" src="https://github.com/user-attachments/assets/ae93c255-9473-440c-a313-fd267cb7296c" />
 
-Configurations for MCP services can be found in the [conf/mcp/config.json.template](https://github.com/iamobservable/starter-templates/blob/main/bc578e85-3aa4-4aff-af9c-09ce6931c1ba/conf/mcp/config.json.template#)) file. Links below in the table describe the initially configuration.
+
+Configurations for MCP services can be found in the locker.yaml.template file. Links below in the table describe the initially configuration.
 
 ***Note - the time tool is configured using uvx instead of directly with the python binary, as the repository describes*** 
 
@@ -97,8 +98,8 @@ A few tool examples are listed below.
 
 | Tool                                                                               | Description                                                               | Configuration |
 | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------- |
-| [time](https://github.com/modelcontextprotocol/servers/tree/main/src/time)         | Provides current time values for [configured timezone](https://github.com/iamobservable/starter-templates/blob/main/conf/mcp/config.example#L5)                      | [config/mcp/config.json.template](https://github.com/iamobservable/starter-templates/blob/6e58e3e23c6661f591844aeed4bce73c15d35505/bc578e85-3aa4-4aff-af9c-09ce6931c1ba/conf/mcp/config.json.template#L3) |
-| [postgres](https://github.com/modelcontextprotocol/servers/tree/main/src/postgres) | Provides sql querying for the configured database (defaults to openwebui) | [config/mcp/config.json.template](https://github.com/iamobservable/starter-templates/blob/6e58e3e23c6661f591844aeed4bce73c15d35505/bc578e85-3aa4-4aff-af9c-09ce6931c1ba/conf/mcp/config.json.template#L7) |
+| [time](https://github.com/modelcontextprotocol/servers/tree/main/src/time)         | Provides current time values for the system timezone                      | locker.yaml.template |
+| [postgres](https://github.com/modelcontextprotocol/servers/tree/main/src/postgres) | Provides sql querying for the configured database (defaults to owui) | locaker.yaml.template |
 
 #### MCP Server Discovery
 
@@ -123,7 +124,7 @@ For the sake of simplicity, this document will cover the instructions for settin
 up notifications via Discord. The Watchtower [arguments section](https://containrrr.dev/watchtower/arguments/) describes 
 additional settings available for the watchtower setup.
 
-1. Edit and uncomment [env/watchtower.env.template](https://github.com/iamobservable/starter-templates/blob/6e58e3e23c6661f591844aeed4bce73c15d35505/bc578e85-3aa4-4aff-af9c-09ce6931c1ba/env/watchtower.env.template#L2) with a discord link. [More information](https://containrrr.dev/shoutrrr/v0.8/services/discord/) is provided on how to create a discord link (token@webhookid).
+1. Edit locker.yaml.template with your discord integration. [More information](https://containrrr.dev/shoutrrr/v0.8/services/discord/) is provided on how to create a discord link (token@webhookid).
 2. Restart the watchtower container
 
 ```bash

@@ -86,7 +86,7 @@ For the sake of simplicity, this document will cover the instructions for settin
 up notifications via Discord. The Watchtower [arguments section](https://containrrr.dev/watchtower/arguments/) describes 
 additional settings available for the watchtower setup.
 
-1. Edit and uncomment [env/watchtower.env.template](https://github.com/iamobservable/starter-templates/blob/main/51524bbb-e387-48a2-91b1-6b8be1d09d3f/env/watchtower.env.template#L2) with a discord link. [More information](https://containrrr.dev/shoutrrr/v0.8/services/discord/) is provided on how to create a discord link (token@webhookid).
+1. Edit locker.yaml.template with your discord integration. [More information](https://containrrr.dev/shoutrrr/v0.8/services/discord/) is provided on how to create a discord link (token@webhookid).
 2. Restart the watchtower container
 
 ```bash
