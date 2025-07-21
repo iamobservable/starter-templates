@@ -18,10 +18,11 @@ This repository is meant to be used in combination with the [Open WebUI starter]
 1. [Connect](#-connect-with-the-observable-world-community)
 2. [Subscriptions & Donations](#%EF%B8%8F-subscriptions--donations)
 3. [Current Templates](#current-templates)
-4. [Dependencies](#dependencies)
-5. [Contribution](#-contribution)
-6. [Star History](#-star-history)
-7. [License](#license)
+4. [Learn About Templates](#locker-yaml-definition)
+5. [Dependencies](#dependencies)
+6. [Contribution](#-contribution)
+7. [Star History](#-star-history)
+8. [License](#license)
 
 
 ---
