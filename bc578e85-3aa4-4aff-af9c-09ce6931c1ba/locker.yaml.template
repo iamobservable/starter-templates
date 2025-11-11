@@ -271,7 +271,7 @@ assignments:
       PDF_EXTRACT_IMAGES=true
       PGVECTOR_DB_URL="postgresql://owui-user:%s@postgres/owui"
       RAG_EMBEDDING_ENGINE="ollama"
-      RAG_ENBEDDING_MODEL="%s"
+      RAG_EMBEDDING_MODEL="%s"
       RAG_OLLAMA_BASE_URL="http://ollama:11434"
       RAG_TEXT_SPLITTER="token"
       RAG_WEB_SEARCH_CONCURRENT_REQUESTS=10
